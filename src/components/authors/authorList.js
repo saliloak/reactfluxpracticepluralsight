@@ -9,7 +9,7 @@ var AuthorList = React.createClass({
     deleteAuthor: function (id, event) {
         event.preventDefault();
         AuthorActions.deleteAuthor(id);
-        toastr.success('Author Delete');
+        toastr.success('Author Deleted');
     },
     render: function () {
         var createAuthorRow = function (author) {

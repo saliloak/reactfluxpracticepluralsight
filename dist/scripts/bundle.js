@@ -50284,7 +50284,7 @@ var AuthorActions = {
 
 module.exports = AuthorActions;
 
-},{"../api/authorApi":206,"../constants/actionTypes":224,"../dispatcher/appDispatcher":225}],205:[function(require,module,exports){
+},{"../api/authorApi":206,"../constants/actionTypes":225,"../dispatcher/appDispatcher":226}],205:[function(require,module,exports){
 "use strict";
 
 var Dispatcher = require('../dispatcher/appDispatcher');
@@ -50304,7 +50304,7 @@ var InitializeActions = {
 
 module.exports = InitializeActions;
 
-},{"../api/authorApi":206,"../constants/actionTypes":224,"../dispatcher/appDispatcher":225}],206:[function(require,module,exports){
+},{"../api/authorApi":206,"../constants/actionTypes":225,"../dispatcher/appDispatcher":226}],206:[function(require,module,exports){
 "use strict";
 
 //This file is mocking a web API by hitting hard coded data.
@@ -50578,7 +50578,7 @@ var AuthorForm = React.createClass({displayName: "AuthorForm",
 
 module.exports = AuthorForm;
 
-},{"../common/textInput":217,"react":202}],213:[function(require,module,exports){
+},{"../common/textInput":218,"react":202}],213:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -50590,7 +50590,7 @@ var AuthorList = React.createClass({displayName: "AuthorList",
     deleteAuthor: function (id, event) {
         event.preventDefault();
         AuthorActions.deleteAuthor(id);
-        toastr.success('Author Delete');
+        toastr.success('Author Deleted');
     },
     render: function () {
         var createAuthorRow = function (author) {
@@ -50662,7 +50662,7 @@ var Authors = React.createClass({displayName: "Authors",
 
 module.exports = Authors;
 
-},{"../../actions/authorActions":204,"../../stores/authorStore":228,"./authorList":213,"react":202,"react-router":33}],215:[function(require,module,exports){
+},{"../../actions/authorActions":204,"../../stores/authorStore":229,"./authorList":213,"react":202,"react-router":33}],215:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -50762,7 +50762,7 @@ var ManageAuthorPage = React.createClass({displayName: "ManageAuthorPage",
 
 module.exports = ManageAuthorPage;
 
-},{"../../actions/authorActions":204,"../../stores/authorStore":228,"./authorForm":212,"react":202,"react-router":33,"toastr":203}],216:[function(require,module,exports){
+},{"../../actions/authorActions":204,"../../stores/authorStore":229,"./authorForm":212,"react":202,"react-router":33,"toastr":203}],216:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -50795,6 +50795,30 @@ module.exports = Header;
 
 },{"react":202,"react-router":33}],217:[function(require,module,exports){
 "use strict";
+var React = require('react');
+
+var Select = React.createClass({displayName: "Select",
+    render: function () {
+        var authorDetails = function (author) {
+            return (
+                React.createElement("option", {key: author.id}, author.name)
+            );
+        };
+        return (
+            React.createElement("div", {className: "form-group"}, 
+                React.createElement("label", {htmlFor: this.props.name}, "Author:"), 
+                React.createElement("select", {className: "form-control", classID: this.props.name}, 
+                    this.props.authorList.map(authorDetails, this)
+                )
+            )
+        );
+    }
+});
+
+module.exports = Select;
+
+},{"react":202}],218:[function(require,module,exports){
+"use strict";
 
 var React = require('react');
 
@@ -50819,10 +50843,11 @@ var Input = React.createClass({displayName: "Input",
 
 module.exports = Input;
 
-},{"react":202}],218:[function(require,module,exports){
+},{"react":202}],219:[function(require,module,exports){
 "use strict";
 var React = require('react');
 var Input = require('../common/textInput');
+var Select = require('../common/selectOption');
 var CourseForm = React.createClass({displayName: "CourseForm",
     render: function () {
         return (
@@ -50860,6 +50885,8 @@ var CourseForm = React.createClass({displayName: "CourseForm",
                     onChange: this.props.onChange, 
                     error: this.props.errors.watchHref}), 
                 React.createElement("br", null), 
+                React.createElement(Select, {name: "selAuthor", authorList: this.props.courses.author}), 
+                React.createElement("br", null), 
                 React.createElement("input", {type: "submit", value: "Save", className: "btn btn-default", onClick: this.props.onSave})
             )
         );
@@ -50868,13 +50895,20 @@ var CourseForm = React.createClass({displayName: "CourseForm",
 
 module.exports = CourseForm;
 
-},{"../common/textInput":217,"react":202}],219:[function(require,module,exports){
+},{"../common/selectOption":217,"../common/textInput":218,"react":202}],220:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
 var Link = require('react-router').Link;
+var CourseApi = require('../../api/courseApi');
+var toastr = require('toastr');
 
 var CourseList = React.createClass({displayName: "CourseList",
+     deleteCourse: function (id, event) {
+        event.preventDefault();
+        CourseApi.deleteCourse(id);
+        toastr.success('Course Deleted');
+    },
     render: function () {
         var createCourseRow = function (course) {
             var authorId = '';
@@ -50889,11 +50923,8 @@ var CourseList = React.createClass({displayName: "CourseList",
             }
             return (
                 React.createElement("tr", {key: course.id}, 
-                    /*<td><a href="#" onClick={this.watchCourse.bind(this, course.watchHref)}>Watch</a></td>
-                    <td><a href="#" onClick={this.deleteCourse.bind(this, course.id)}>Delete</a></td>*/
-                    React.createElement("td", null, React.createElement("a", {href: "#"}, "Watch")), 
-                    React.createElement("td", null, React.createElement("a", {href: "#"}, "Delete")), 
-                    /*Create page for Manage Course*/
+                    React.createElement("td", null, React.createElement("a", {href: course.watchHref, target: "_blank"}, "Watch")), 
+                    React.createElement("td", null, React.createElement("a", {href: "#", onClick: this.deleteCourse.bind(this, course.id)}, "Delete")), 
                     React.createElement("td", null, React.createElement(Link, {to: "manageCourse", params: { id: course.id}}, course.id)), 
                     React.createElement("td", null, course.title), 
                     React.createElement("td", {key: authorId}, authorName), 
@@ -50925,7 +50956,7 @@ var CourseList = React.createClass({displayName: "CourseList",
 
 module.exports = CourseList;
 
-},{"react":202,"react-router":33}],220:[function(require,module,exports){
+},{"../../api/courseApi":208,"react":202,"react-router":33,"toastr":203}],221:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -50952,14 +50983,15 @@ var Courses = React.createClass({displayName: "Courses",
 
 module.exports = Courses;
 
-},{"../../api/courseApi":208,"./courseList":219,"react":202,"react-router":33}],221:[function(require,module,exports){
+},{"../../api/courseApi":208,"./courseList":220,"react":202,"react-router":33}],222:[function(require,module,exports){
 "use strict";
 var React = require('react');
 var Router = require('react-router');
 var CourseForm = require('./courseForm');
 var CourseApi = require('../../api/courseApi');
 var toastr = require('toastr');
-
+var AuthorApi = require('../../api/authorApi');
+var assign = require('object-assign');
 
 var ManageCoursePage = React.createClass({displayName: "ManageCoursePage",
     mixins: [
@@ -50980,10 +51012,7 @@ var ManageCoursePage = React.createClass({displayName: "ManageCoursePage",
                 length: '',
                 category: '',
                 watchHref: '',
-                author: {
-                    id: '',
-                    name: ''
-                }
+                author: this.getAllCourseAuthors()
             },
             errors: {
             },
@@ -51047,6 +51076,23 @@ var ManageCoursePage = React.createClass({displayName: "ManageCoursePage",
         toastr.success('Course Saved');
         this.transitionTo('courses');
     },
+    getAllCourseAuthors: function () {
+        var author = AuthorApi.getAllAuthors();
+        var result = [];
+
+        function AuthorObject() {
+            this.id = '';
+            this.name = '';
+        }
+
+        for (var i = 0; i < author.length; i++) {
+            var res = new AuthorObject();
+            res.id = author[i].id;
+            res.name = author[i].firstName + " " + author[i].lastName;
+            result.push(res);
+        }
+        return result;
+    },
     render: function () {
         return (
             React.createElement("div", null, 
@@ -51058,7 +51104,7 @@ var ManageCoursePage = React.createClass({displayName: "ManageCoursePage",
 
 module.exports = ManageCoursePage;
 
-},{"../../api/courseApi":208,"./courseForm":218,"react":202,"react-router":33,"toastr":203}],222:[function(require,module,exports){
+},{"../../api/authorApi":206,"../../api/courseApi":208,"./courseForm":219,"object-assign":7,"react":202,"react-router":33,"toastr":203}],223:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -51079,7 +51125,7 @@ var Home = React.createClass({displayName: "Home",
 
 module.exports = Home;
 
-},{"react":202,"react-router":33}],223:[function(require,module,exports){
+},{"react":202,"react-router":33}],224:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -51099,7 +51145,7 @@ var NotFoundPage = React.createClass({displayName: "NotFoundPage",
 
 module.exports = NotFoundPage;
 
-},{"react":202,"react-router":33}],224:[function(require,module,exports){
+},{"react":202,"react-router":33}],225:[function(require,module,exports){
 "use strict";
 var keyMirror = require('react/lib/keyMirror');
 
@@ -51110,11 +51156,11 @@ module.exports = keyMirror({
     DELETE_AUTHOR: null
 });
 
-},{"react/lib/keyMirror":187}],225:[function(require,module,exports){
+},{"react/lib/keyMirror":187}],226:[function(require,module,exports){
 var Dispatcher = require('flux').Dispatcher;
 module.exports = new Dispatcher();
 
-},{"flux":2}],226:[function(require,module,exports){
+},{"flux":2}],227:[function(require,module,exports){
 "use strict";
 var React = require('react');
 var Router = require('react-router');
@@ -51127,7 +51173,7 @@ Router.run(routes, function (Handler) {
     React.render(React.createElement(Handler, null), document.getElementById('app'));
 });
 
-},{"./actions/initializeActions":205,"./routes":227,"react":202,"react-router":33}],227:[function(require,module,exports){
+},{"./actions/initializeActions":205,"./routes":228,"react":202,"react-router":33}],228:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -51157,7 +51203,7 @@ var routes = (
 
 module.exports = routes;
 
-},{"./components/about/aboutPage":210,"./components/app":211,"./components/authors/authorPage":214,"./components/authors/manageAuthorPage":215,"./components/courses/coursesPage":220,"./components/courses/manageCoursePage":221,"./components/homePage":222,"./components/notFoundPage":223,"react":202,"react-router":33}],228:[function(require,module,exports){
+},{"./components/about/aboutPage":210,"./components/app":211,"./components/authors/authorPage":214,"./components/authors/manageAuthorPage":215,"./components/courses/coursesPage":221,"./components/courses/manageCoursePage":222,"./components/homePage":223,"./components/notFoundPage":224,"react":202,"react-router":33}],229:[function(require,module,exports){
 "use strict";
 
 var Dispatcher = require('../dispatcher/appDispatcher');
@@ -51215,4 +51261,4 @@ Dispatcher.register(function (action) {
 
 module.exports = AuthorStore;
 
-},{"../constants/actionTypes":224,"../dispatcher/appDispatcher":225,"events":1,"lodash":6,"object-assign":7}]},{},[226]);
+},{"../constants/actionTypes":225,"../dispatcher/appDispatcher":226,"events":1,"lodash":6,"object-assign":7}]},{},[227]);

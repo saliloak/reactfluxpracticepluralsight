@@ -1,6 +1,7 @@
 "use strict";
 var React = require('react');
 var Input = require('../common/textInput');
+var Select = require('../common/selectOption');
 var CourseForm = React.createClass({
     render: function () {
         return (
@@ -37,6 +38,8 @@ var CourseForm = React.createClass({
                     value={this.props.courses.watchHref}
                     onChange={this.props.onChange}
                     error={this.props.errors.watchHref} />
+                <br />
+                <Select name="selAuthor" authorList={this.props.courses.author} />
                 <br />
                 <input type="submit" value="Save" className="btn btn-default" onClick={this.props.onSave} />
             </form>
