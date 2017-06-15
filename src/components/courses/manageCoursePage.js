@@ -4,7 +4,7 @@ var Router = require('react-router');
 var CourseForm = require('./courseForm');
 var CourseApi = require('../../api/courseApi');
 var toastr = require('toastr');
-
+var AuthorApi = require('../../api/authorApi');
 
 var ManageCoursePage = React.createClass({
     mixins: [
@@ -25,10 +25,7 @@ var ManageCoursePage = React.createClass({
                 length: '',
                 category: '',
                 watchHref: '',
-                author: {
-                    id: '',
-                    name: ''
-                }
+                author: this.getAllCourseAuthors()
             },
             errors: {
             },
@@ -91,6 +88,23 @@ var ManageCoursePage = React.createClass({
         });
         toastr.success('Course Saved');
         this.transitionTo('courses');
+    },
+    getAllCourseAuthors: function () {
+        var author = AuthorApi.getAllAuthors();
+        var result = [];
+
+        function AuthorObject() {
+            this.id = '';
+            this.name = '';
+        }
+
+        for (var i = 0; i < author.length; i++) {
+            var res = new AuthorObject();
+            res.id = author[i].id;
+            res.name = author[i].firstName + " " + author[i].lastName;
+            result.push(res);
+        }
+        return result;
     },
     render: function () {
         return (

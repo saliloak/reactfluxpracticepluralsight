@@ -2,8 +2,15 @@
 
 var React = require('react');
 var Link = require('react-router').Link;
+var CourseApi = require('../../api/courseApi');
+var toastr = require('toastr');
 
 var CourseList = React.createClass({
+     deleteCourse: function (id, event) {
+        event.preventDefault();
+        CourseApi.deleteCourse(id);
+        toastr.success('Course Deleted');
+    },
     render: function () {
         var createCourseRow = function (course) {
             var authorId = '';
@@ -18,11 +25,8 @@ var CourseList = React.createClass({
             }
             return (
                 <tr key={course.id}>
-                    {/*<td><a href="#" onClick={this.watchCourse.bind(this, course.watchHref)}>Watch</a></td>
-                    <td><a href="#" onClick={this.deleteCourse.bind(this, course.id)}>Delete</a></td>*/}
-                    <td><a href="#">Watch</a></td>
-                    <td><a href="#">Delete</a></td>
-                    {/*Create page for Manage Course*/}
+                    <td><a href={course.watchHref} target="_blank">Watch</a></td>
+                    <td><a href="#" onClick={this.deleteCourse.bind(this, course.id)}>Delete</a></td>
                     <td><Link to="manageCourse" params={{ id: course.id }}>{course.id}</Link></td>
                     <td>{course.title}</td>
                     <td key={authorId}>{authorName}</td>
