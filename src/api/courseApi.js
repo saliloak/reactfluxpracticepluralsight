@@ -24,6 +24,16 @@ var CourseApi = {
     },
 
     saveCourse: function (course) {
+        function AuthorObject() {
+            this.id = '';
+            this.name = '';
+        }
+
+        course.author = {};
+        course.author = new AuthorObject();
+        course.author.id = course.selAuthorId;
+        course.author.name = course.selAuthorName;
+
         console.log('Imagine saving course via AJAX call...');
 
         if (course.id) {

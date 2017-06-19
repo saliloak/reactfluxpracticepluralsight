@@ -50405,6 +50405,16 @@ var CourseApi = {
     },
 
     saveCourse: function (course) {
+        function AuthorObject() {
+            this.id = '';
+            this.name = '';
+        }
+
+        course.author = {};
+        course.author = new AuthorObject();
+        course.author.id = course.selAuthorId;
+        course.author.name = course.selAuthorName;
+
         console.log('Imagine saving course via AJAX call...');
 
         if (course.id) {
@@ -50798,16 +50808,31 @@ module.exports = Header;
 var React = require('react');
 
 var Select = React.createClass({displayName: "Select",
+    selectAuthor: function (event) {
+        var authorName = event.target.value;
+        var options = event.target.options;
+        var authorId = '';
+        for (var i = 0, l = options.length; i < l; i++) {
+            if (options[i].selected) {
+                authorId = options[i].id;
+            }
+        }
+        var authorChoosen = {
+            authorId: authorId,
+            authorName: authorName
+        };
+        this.props.selectedAuthor(authorChoosen);
+    },
     render: function () {
         var authorDetails = function (author) {
             return (
-                React.createElement("option", {key: author.id}, author.name)
+                React.createElement("option", {value: author.name, id: author.id, key: author.id}, author.name)
             );
         };
         return (
             React.createElement("div", {className: "form-group"}, 
                 React.createElement("label", {htmlFor: this.props.name}, "Author:"), 
-                React.createElement("select", {className: "form-control", classID: this.props.name}, 
+                React.createElement("select", {className: "form-control", classID: this.props.name, onChange: this.selectAuthor}, 
                     this.props.authorList.map(authorDetails, this)
                 )
             )
@@ -50849,6 +50874,9 @@ var React = require('react');
 var Input = require('../common/textInput');
 var Select = require('../common/selectOption');
 var CourseForm = React.createClass({displayName: "CourseForm",
+    onSelect: function (author) {
+        this.props.selectedAuthor(author);
+    },
     render: function () {
         return (
             React.createElement("form", null, 
@@ -50885,7 +50913,7 @@ var CourseForm = React.createClass({displayName: "CourseForm",
                     onChange: this.props.onChange, 
                     error: this.props.errors.watchHref}), 
                 React.createElement("br", null), 
-                React.createElement(Select, {name: "selAuthor", authorList: this.props.courses.author}), 
+                React.createElement(Select, {name: "selAuthor", selectedAuthor: this.onSelect, authorList: this.props.courses.author}), 
                 React.createElement("br", null), 
                 React.createElement("input", {type: "submit", value: "Save", className: "btn btn-default", onClick: this.props.onSave})
             )
@@ -50966,6 +50994,8 @@ var Link = require('react-router').Link;
 
 var Courses = React.createClass({displayName: "Courses",
     getInitialState: function () {
+        debugger;
+        var res = CourseApi.getAllCourses();
         return {
             courses: CourseApi.getAllCourses()
         };
@@ -50991,7 +51021,6 @@ var CourseForm = require('./courseForm');
 var CourseApi = require('../../api/courseApi');
 var toastr = require('toastr');
 var AuthorApi = require('../../api/authorApi');
-var assign = require('object-assign');
 
 var ManageCoursePage = React.createClass({displayName: "ManageCoursePage",
     mixins: [
@@ -51012,6 +51041,8 @@ var ManageCoursePage = React.createClass({displayName: "ManageCoursePage",
                 length: '',
                 category: '',
                 watchHref: '',
+                selAuthorId: '',
+                selAuthorName: '',
                 author: this.getAllCourseAuthors()
             },
             errors: {
@@ -51035,6 +51066,16 @@ var ManageCoursePage = React.createClass({displayName: "ManageCoursePage",
         var field = event.target.name;
         var value = event.target.value;
         this.state.course[field] = value;
+        return this.setState({
+            course: this.state.course
+        });
+    },
+    setCourseAuthor: function (author) {
+        this.setState({
+            dirty: true
+        });
+        this.state.course.selAuthorId = author.authorId;
+        this.state.course.selAuthorName = author.authorName;
         return this.setState({
             course: this.state.course
         });
@@ -51065,6 +51106,7 @@ var ManageCoursePage = React.createClass({displayName: "ManageCoursePage",
         return isFormValid;
     },
     saveCourse: function (event) {
+        debugger;
         event.preventDefault();
         if (!this.courseFormIsValid()) {
             return;
@@ -51096,7 +51138,7 @@ var ManageCoursePage = React.createClass({displayName: "ManageCoursePage",
     render: function () {
         return (
             React.createElement("div", null, 
-                React.createElement(CourseForm, {courses: this.state.course, onSave: this.saveCourse, onChange: this.setCourseState, errors: this.state.errors})
+                React.createElement(CourseForm, {courses: this.state.course, onSave: this.saveCourse, onChange: this.setCourseState, selectedAuthor: this.setCourseAuthor, errors: this.state.errors})
             )
         );
     }
@@ -51104,7 +51146,7 @@ var ManageCoursePage = React.createClass({displayName: "ManageCoursePage",
 
 module.exports = ManageCoursePage;
 
-},{"../../api/authorApi":206,"../../api/courseApi":208,"./courseForm":219,"object-assign":7,"react":202,"react-router":33,"toastr":203}],223:[function(require,module,exports){
+},{"../../api/authorApi":206,"../../api/courseApi":208,"./courseForm":219,"react":202,"react-router":33,"toastr":203}],223:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
