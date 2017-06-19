@@ -7,7 +7,6 @@ var Link = require('react-router').Link;
 
 var Courses = React.createClass({
     getInitialState: function () {
-        debugger;
         var res = CourseApi.getAllCourses();
         return {
             courses: CourseApi.getAllCourses()
