@@ -3,9 +3,12 @@ var React = require('react');
 var Input = require('../common/textInput');
 var Select = require('../common/selectOption');
 var CourseForm = React.createClass({
+    onSelect: function (author) {
+        this.props.selectedAuthor(author);
+    },
     render: function () {
         return (
-            <form>
+            <form >
                 <h1>Manage Course</h1>
                 <Input
                     name="title"
@@ -39,10 +42,10 @@ var CourseForm = React.createClass({
                     onChange={this.props.onChange}
                     error={this.props.errors.watchHref} />
                 <br />
-                <Select name="selAuthor" authorList={this.props.courses.author} />
+                <Select name="selAuthor" selectedAuthor={this.onSelect} authorList={this.props.courses.author} />
                 <br />
                 <input type="submit" value="Save" className="btn btn-default" onClick={this.props.onSave} />
-            </form>
+            </form >
         );
     }
 });

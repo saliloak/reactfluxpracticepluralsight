@@ -25,6 +25,8 @@ var ManageCoursePage = React.createClass({
                 length: '',
                 category: '',
                 watchHref: '',
+                selAuthorId: '',
+                selAuthorName: '',
                 author: this.getAllCourseAuthors()
             },
             errors: {
@@ -48,6 +50,16 @@ var ManageCoursePage = React.createClass({
         var field = event.target.name;
         var value = event.target.value;
         this.state.course[field] = value;
+        return this.setState({
+            course: this.state.course
+        });
+    },
+    setCourseAuthor: function (author) {
+        this.setState({
+            dirty: true
+        });
+        this.state.course.selAuthorId = author.authorId;
+        this.state.course.selAuthorName = author.authorName;
         return this.setState({
             course: this.state.course
         });
@@ -109,7 +121,7 @@ var ManageCoursePage = React.createClass({
     render: function () {
         return (
             <div>
-                <CourseForm courses={this.state.course} onSave={this.saveCourse} onChange={this.setCourseState} errors={this.state.errors} />
+                <CourseForm courses={this.state.course} onSave={this.saveCourse} onChange={this.setCourseState} selectedAuthor={this.setCourseAuthor} errors={this.state.errors} />
             </div>
         );
     }
